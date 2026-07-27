@@ -165,16 +165,37 @@ body {
 	opacity: 0.7;
 }
 
+.portrait-continue {
+	margin-top: 0.3rem;
+	padding: 0.72rem 1.2rem;
+	border: 1px solid rgba(139, 246, 236, 0.68);
+	border-radius: 999px;
+	color: #d9fffa;
+	background: rgba(1, 25, 35, 0.72);
+	font: 650 0.88rem/1 system-ui, sans-serif;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.portrait-continue:focus-visible {
+	outline: 0.16rem solid #7cf4df;
+	outline-offset: 0.18rem;
+}
+
 @keyframes rotate-phone {
 	0%, 20% { transform: rotate(-8deg); }
 	55%, 85% { transform: rotate(82deg); }
 	100% { transform: rotate(-8deg); }
 }
 
-@media (orientation: portrait) and (max-width: 900px) {
+@media (orientation: portrait) and (max-width: 900px) and (hover: none) and (pointer: coarse) {
 	#rotate-overlay {
 		display: flex;
 	}
+}
+
+body.portrait-override #rotate-overlay {
+	display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -197,6 +218,9 @@ body {
 			<div class="rotate-phone" aria-hidden="true"></div>
 			<h1>TURN TOWARD THE REEF</h1>
 			<p>Rotate your phone to landscape for the full living-aquarium experience.</p>
+			<button class="portrait-continue" id="portrait-continue" type="button">
+				Play anyway
+			</button>
 			<div class="rotate-bubbles" aria-hidden="true">● · ● · ●</div>
 		</div>
 
@@ -217,6 +241,11 @@ const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
+	document.getElementById('portrait-continue').addEventListener('click', function () {
+		document.body.classList.add('portrait-override');
+		document.getElementById('canvas').focus();
+	});
+
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
