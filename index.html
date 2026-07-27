@@ -2,7 +2,11 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<meta
+			name="viewport"
+			content="width=device-width, user-scalable=no, initial-scale=1.0, viewport-fit=cover"
+		>
+		<meta name="theme-color" content="#033747">
 		<title>Project Glasswater</title>
 		<style>
 html, body, #canvas {
@@ -11,9 +15,15 @@ html, body, #canvas {
 	border: 0;
 }
 
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
 body {
 	color: white;
-	background-color: black;
+	background:
+		radial-gradient(circle at 50% 30%, #07586b 0%, #033747 44%, #011923 100%);
 	overflow: hidden;
 	touch-action: none;
 }
@@ -71,9 +81,22 @@ body {
 }
 
 #status-progress {
+	appearance: none;
 	bottom: 10%;
-	width: 50%;
+	width: min(50%, 28rem);
+	height: 0.35rem;
 	margin: 0 auto;
+	border: 0;
+	border-radius: 1rem;
+	overflow: hidden;
+}
+
+#status-progress::-webkit-progress-bar {
+	background: rgba(2, 22, 30, 0.8);
+}
+
+#status-progress::-webkit-progress-value {
+	background: linear-gradient(90deg, #1ec9cc, #7cf4df);
 }
 
 #status-notice {
@@ -81,13 +104,84 @@ body {
 	border-radius: 0.5rem;
 	border: 1px solid #9b3943;
 	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	font-family: system-ui, sans-serif;
 	line-height: 1.3;
 	margin: 0 2rem;
 	overflow: hidden;
 	padding: 1rem;
 	text-align: center;
 	z-index: 1;
+}
+
+#rotate-overlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	box-sizing: border-box;
+	padding: max(2rem, env(safe-area-inset-top))
+		max(2rem, env(safe-area-inset-right))
+		max(2rem, env(safe-area-inset-bottom))
+		max(2rem, env(safe-area-inset-left));
+	background:
+		radial-gradient(circle at 50% 35%, rgba(15, 126, 145, 0.62), transparent 42%),
+		linear-gradient(160deg, #032f3e, #01151f 72%);
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 1.1rem;
+}
+
+.rotate-phone {
+	width: 4.2rem;
+	height: 7.2rem;
+	border: 0.22rem solid #9ff9ee;
+	border-radius: 0.8rem;
+	box-shadow: 0 0 2rem rgba(38, 222, 217, 0.38);
+	transform: rotate(-8deg);
+	animation: rotate-phone 2.6s ease-in-out infinite;
+}
+
+#rotate-overlay h1 {
+	margin: 0.7rem 0 0;
+	font-size: clamp(1.55rem, 7vw, 2.5rem);
+	font-weight: 650;
+	letter-spacing: 0.04em;
+}
+
+#rotate-overlay p {
+	max-width: 24rem;
+	margin: 0;
+	color: #9bdbe0;
+	font-size: clamp(0.95rem, 4vw, 1.2rem);
+	line-height: 1.5;
+}
+
+.rotate-bubbles {
+	color: #6be1e7;
+	letter-spacing: 0.55rem;
+	opacity: 0.7;
+}
+
+@keyframes rotate-phone {
+	0%, 20% { transform: rotate(-8deg); }
+	55%, 85% { transform: rotate(82deg); }
+	100% { transform: rotate(-8deg); }
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+	#rotate-overlay {
+		display: flex;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rotate-phone {
+		animation: none;
+		transform: rotate(82deg);
+	}
 }
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
@@ -98,6 +192,13 @@ body {
 		<canvas id="canvas">
 			Your browser does not support the canvas tag.
 		</canvas>
+
+		<div id="rotate-overlay" role="status" aria-label="Rotate device">
+			<div class="rotate-phone" aria-hidden="true"></div>
+			<h1>TURN TOWARD THE REEF</h1>
+			<p>Rotate your phone to landscape for the full living-aquarium experience.</p>
+			<div class="rotate-bubbles" aria-hidden="true">● · ● · ●</div>
+		</div>
 
 		<noscript>
 			Your browser does not support JavaScript.
@@ -111,7 +212,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":35127272,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":20905608,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -167,14 +268,19 @@ const engine = new Engine(GODOT_CONFIG);
 	});
 
 	if (missing.length !== 0) {
-		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+		if (
+			GODOT_CONFIG['serviceWorker']
+			&& GODOT_CONFIG['ensureCrossOriginIsolationHeaders']
+			&& 'serviceWorker' in navigator
+		) {
 			let serviceWorkerRegistrationPromise;
 			try {
 				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
 			} catch (err) {
-				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
+				serviceWorkerRegistrationPromise = Promise.reject(
+					new Error('Service worker registration failed.')
+				);
 			}
-			// There's a chance that installing the service worker would fix the issue
 			Promise.race([
 				serviceWorkerRegistrationPromise.then((registration) => {
 					if (registration != null) {
@@ -182,19 +288,17 @@ const engine = new Engine(GODOT_CONFIG);
 					}
 					return registration;
 				}).then(() => engine.installServiceWorker()),
-				// For some reason, `getRegistration()` can stall
 				new Promise((resolve) => {
 					setTimeout(() => resolve(), 2000);
 				}),
 			]).then(() => {
-				// Reload if there was no error.
 				window.location.reload();
 			}).catch((err) => {
 				console.error('Error while registering service worker:', err);
 			});
 		} else {
-			// Display the message as usual
-			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
+			const missingMsg =
+				'Error\nThe following features required to run Godot projects on the Web are missing:\n';
 			displayFailureNotice(missingMsg + missing.join('\n'));
 		}
 	} else {
