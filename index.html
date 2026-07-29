@@ -234,9 +234,16 @@ body.portrait-override #rotate-overlay {
 			<div id="status-notice"></div>
 		</div>
 
+		<script>
+if (window.location.protocol === 'file:') {
+	window.location.replace(
+		'https://chsami.github.io/glasswater-play/?from=local-export'
+	);
+}
+		</script>
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":27354204,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"mainPack":"index.pck?v=cd07f2d9","godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":27357692,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"mainPack":"index.pck?v=2cf77000","godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
